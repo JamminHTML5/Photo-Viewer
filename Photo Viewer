@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Photo Viewer</title>
+<meta charset="UTF-8">
+<meta name="keywords" content="jamminhtml5,photo,viewer,html5,playlist">
+<script>
+var arrPath = [], s=0, n=0;
+
+function showHilite(idnum) {
+var flist2 = document.getElementById("fileList");
+var p1 = document.getElementById("photo1");
+var bp = document.getElementById("big_photo");
+var idn = idnum;
+
+var prev = flist2.childNodes[s];        // previous selection
+prev.style.backgroundColor='';          // Remove styling
+prev.style.color='';
+
+var active = flist2.childNodes[idnum];  // active selection
+active.style.backgroundColor='blue';
+active.style.color='white';
+
+p1.src = arrPath[idn];
+bp.src = arrPath[idn];
+
+document.getElementById("showing").innerHTML = active.innerHTML;
+
+        return idn;
+}   // End function
+
+function makeFileList() {
+var input = document.getElementById("filesToUpload");
+
+if(input.files.length == 0) return;
+
+var flist = document.getElementById("fileList");
+var first = flist.childNodes[s];
+var p1 = document.getElementById("photo1");
+var bp = document.getElementById("big_photo");
+if(n > 0) {
+first.style.backgroundColor='';
+first.style.color='';
+s=n;  // start=number;
+}
+else flist.innerHTML='';  // Load or Refresh zeroes n.
+
+for(var i = 0; i < input.files.length; i++) {
+  var fname=input.files[i].name;
+  var samplepos=fname.lastIndexOf('.');
+  var ext = fname.substr(samplepos);
+  if(ext=='.bmp' || ext=='.jpg' || ext=='.png' || ext=='.gif' || ext=='.svg') {
+    var div = document.createElement("div");
+    var str = '<div id="' + n + '" class="ptr" onclick="s = showHilite(this.id)">&#149;&nbsp; ' + fname + '</div>';
+    div.innerHTML = str;
+    flist.appendChild(div);
+
+    var oBlob = URL.createObjectURL(event.target.files[i]);
+    arrPath.push(oBlob);
+
+    n++
+    }  // End if
+}      // End for
+first = flist.childNodes[s];  // Hilite the first appended list item!
+first.style.backgroundColor='green';
+first.style.color='white';
+
+p1.src = arrPath[s];
+bp.src = arrPath[s];
+document.getElementById('showing').innerHTML = first.innerHTML;
+}      // End function
+
+function fullScreen() {
+bd = document.getElementById('big_div');
+bp = document.getElementById('big_photo');
+
+bd.width = screen.width;
+bd.height = screen.height;
+bd.style.backgroundColor = 'black';
+
+bp.style.maxWidth = '1020px';
+bp.style.maxHeight = '600px';
+
+bd.style.display = "inherit";
+
+bp.webkitRequestFullScreen();
+}
+
+function goAway() {
+bd = document.getElementById('big_div').style.display='none';
+document.webkitCancelFullScreen();
+}
+</script>
+
+<style>
+/*body {overflow-x:hidden}*/
+#redo {position:relative;top:5px}
+#fs {position:relative; top:8px; float:right}
+#filesToUpload {display:none}
+#fileList {width:265px; height:360px; overflow-x:hidden; overflow-y:auto}
+.ptr:hover {background-color:CornflowerBlue; color:white; cursor:pointer}
+
+#showing {cursor:default}
+#photo1 {max-width:720px; max-height:420px}
+.photo_holder {
+background-color:gray;
+position:absolute; left:280px; top:10px;
+text-align:center;
+width:720px
+}
+#big_div {
+position:absolute; left:0px; top:0px; 
+text-align:center; 
+width:100%; height:100%; 
+display:none;
+overflow:hidden
+}
+</style>
+</head>
+
+<body>
+<div style='text-align:left; width:265px'>
+  <span id="fs">
+    <input type="image" src="https://lh6.googleusercontent.com/-Yxj9RATRXi0/VPeACECCDpI/AAAAAAAAAEg/ykbss53Y1xU/s19/full-screen-black.png" height="20px" onclick="this.blur(); fullScreen()" /></span>
+  <span id="redo" onclick="window.location.reload()">
+    <img src='https://lh6.googleusercontent.com/-onoEy8xZ42U/VPeACtRMpRI/AAAAAAAAADw/0gHSUkQVQp8/s20/refresh-icon-black.png' height='22px' /></span>&nbsp;
+  <input id="filesToUpload" type="file" multiple accept="image/*" onChange="makeFileList()" />
+  <button onClick="filesToUpload.click()">Select Photos</button>&nbsp;
+  <hr>
+</div>
+
+<div id='fileList'>
+  Click <code>Select Photos.</code><br>
+  Navigate to any folder.<br>
+  Select an image file or files.<br>
+  Click <code>Open.</code><br><br>
+</div>
+
+<div style='text-align:left; width:265px'><hr></div>
+
+<div id='showing'></div>
+
+<div class="photo_holder">
+  <img id="photo1" src="https://lh3.googleusercontent.com/-A8n3JNPnONM/VP9fku1h9mI/AAAAAAAAALs/fFEM_gXwsTM/s720/Photo%2520Viewer%2520-%2520Grad.png" />
+</div>
+
+<div id="big_div" onclick = "goAway()">
+<table width="100%" height="100%" align="center" valign="center">
+  <tr>
+    <td>
+      <img id="big_photo" src="" />
+    </td>
+  </tr>
+</table>
+</div>
+
+</body>
+</html>
